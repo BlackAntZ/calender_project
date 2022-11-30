@@ -1,0 +1,65 @@
+.side_bar {
+  background-color: white;
+  width: 15%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: 10%;
+  padding-left: .5rem;
+  position: fixed;
+}
+
+.side_bar h2 {
+  font-size: 1.2rem;
+  color: #0e3381;
+  font-weight: 500;
+}
+
+.side_bar > div:not(.logout) {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.side_bar > div > div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.3rem;
+  padding: .3rem .5rem;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  cursor: pointer;
+}
+
+.side_bar > div > div:hover {
+  background-color: #d9b8d9;
+  color: #0e3381;
+}
+
+.selected {
+  background-color: #d9b8d9;
+  color: #0e3381;
+}
+
+.side_bar > div > div i {
+  font-size: 1.2rem;
+}
+
+.logout {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .3rem .5rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout:hover {
+  background-color: #c4c4c4;
+}

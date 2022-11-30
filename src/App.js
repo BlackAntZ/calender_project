@@ -1,25 +1,14 @@
-import logo from './logo.svg';
-import './App.css';
+import SideBar from "./components/UI/SideBar";
+import classes from "./App.module.css";
+import Calender from "./components/calender/Calender";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={classes.main}>
+      <SideBar></SideBar>
+      <Calender></Calender>
     </div>
   );
-}
+};
 
 export default App;
