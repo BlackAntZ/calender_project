@@ -81,7 +81,7 @@ const Calender = () => {
     <div className={classes.container}>
       <div className={classes.header}>
         <div>
-          <h1>{currentMonthName.toLocaleString('default', {month: 'long'})}</h1>
+          <h1>{currentMonthName.toLocaleString('default', {month: 'long', year: 'numeric'})}</h1>
           <div>
             <i className='bx bxs-chevron-left'></i>
             <i className='bx bxs-chevron-right'></i>
