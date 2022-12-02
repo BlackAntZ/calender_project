@@ -1,5 +1,6 @@
 import classes from "./SideBar.module.css";
 import {useState} from "react";
+import React from "react";
 
 const SideBar = () => {
   const [selected, setSelected] = useState(null);

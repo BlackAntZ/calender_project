@@ -1,0 +1,48 @@
+.duration_div {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-primary-500);
+  padding: .3rem .5rem;
+  border-radius: .3rem;
+  color: white;
+  cursor: pointer;
+  gap: .5rem;
+}
+
+.duration_div:hover {
+  background-color: var(--color-primary-600);
+}
+
+.duration_div p {
+  white-space: nowrap;
+}
+
+.duration_div > div {
+  position: absolute;
+  left: 0;
+  top: 105%;
+  width: 100%;
+  background-color: var(--color-primary-500);
+  border-radius: .3rem;
+}
+
+.duration_div > div > div {
+  margin: .1rem .2rem;
+  background-color: #5b72a1;
+  border-radius: .2rem;
+  padding-inline: .2rem;
+  cursor: pointer;
+}
+
+.duration_div > div > div:hover {
+  background-color: #36538c;
+}
+
+.duration_div .selected {
+  background-color: #36538c;
+}
+
+.display_none {
+  display: none;
+}

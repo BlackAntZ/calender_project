@@ -1,8 +1,7 @@
-import React, {useCallback, useImperativeHandle, useRef, useState} from 'react';
+import React, {useCallback, useImperativeHandle, useRef} from 'react';
 import classes from "./Input.module.css";
 
 const Input = React.forwardRef( ({name, onSubmit, selectNext, label}, ref) => {
-  const [inputFieldData, setInputFieldData] = useState({});
   const inputRef = useRef();
 
   const focus = () => {
@@ -23,7 +22,6 @@ const Input = React.forwardRef( ({name, onSubmit, selectNext, label}, ref) => {
     const term = inputRef.current["value"].trim();
 
     const data = {name: name, term: term}
-    setInputFieldData(data);
     onSubmit(data);
   },[name, onSubmit]);
 

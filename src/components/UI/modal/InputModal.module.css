@@ -2,11 +2,38 @@
   width: 100%;
   height: 100%;
   position: relative;
-  padding: 2rem;
+  padding: 2rem 2rem .3rem;
 }
 
 .container h1 {
   text-align: center;
   font-size: 2rem;
   margin-bottom: 1rem;
+}
+
+.time_picker {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: .5rem;
+  padding-inline: 10%;
+  gap: 1rem;
+}
+
+.time_picker > p {
+  width: 15%;
+}
+
+.form > div:last-of-type {
+  background-color: #0e3381;
+  width: fit-content;
+  margin: 1rem auto 0;
+  color: white;
+  padding: .5rem 1rem;
+  border-radius: .3rem;
+  cursor: pointer;
+}
+
+.form > div:last-of-type:hover {
+  background-color: #082157;
 }
