@@ -4,8 +4,8 @@
   margin-left: 15%;
   padding: .5rem;
   color: var(--color-gray-100);
-  display: flex;
-  flex-direction: column;
+  /*display: flex;*/
+  /*flex-direction: column;*/
 }
 
 .header {
@@ -14,6 +14,7 @@
   padding-bottom: 1rem;
   display: grid;
   grid-template-columns: 30rem 10rem 10rem;
+  height: 4.5rem;
 }
 
 .header > div:first-of-type {
@@ -60,12 +61,41 @@
   background-color: var(--color-gray-500);
 }
 
-.main {
+.zone {
+  position: relative;
+}
+
+.zone > div {
+  position: absolute;
+  top: 105%;
+  left: 0;
   width: 100%;
-  flex: 1 1 100%;
+  background-color: var(--color-gray-600);
+  border-radius: .3rem;
+}
+
+.zone > div > div {
+  background-color: var(--color-gray-500);
+  margin: .1rem .2rem;
+  border-radius: .2rem;
+  cursor: pointer;
+  padding: .1rem .3rem;
+}
+
+.zone > div > div:hover {
+  background-color: var(--color-gray-400);
 }
 
 .main {
+  width: 100%;
+  height: calc(100% - 4.5rem);
+}
+
+.grid {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
   display: grid;
   grid-template-columns: repeat(7, minmax(1rem, 1fr));
   grid-template-rows: 1.2rem repeat(6, minmax(1rem, 1fr));
@@ -77,49 +107,87 @@
   justify-content: center;
 }
 
-.main > div:not(.first_row) {
+.grid > div:not(.first_row) {
   color: var(--color-gray-600);
-  width: 100%;
-  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
   background-color: white;
   border-radius: .5rem;
   display: flex;
   padding-top: .5rem;
   flex-direction: column;
-  align-items: center;
   cursor: pointer;
   border: 3px solid white;
+  overflow-y: scroll;
 }
 
-.main > div:not(.first_row):hover {
+.grid > div:not(.first_row)::-webkit-scrollbar {
+  width: 0;
+}
+
+.grid > div:not(.first_row):hover {
   background-color: var(--color-gray-200);
   border: 3px solid var(--color-primary-400);
 }
 
-.main > div.grayed:hover {
+.grid > div.grayed:hover {
   border: 3px solid var(--color-primary-400);
   background-color: var(--color-gray-400);
 }
 
-.main > .grayed:not(.first_row) {
+.grid > .grayed:not(.first_row) {
   background-color: var(--color-gray-300);
   border: 3px solid var(--color-gray-300);
 }
 
-.main .today_cal:not(.first_row) {
-  color: red;
+.grid > div:not(.first_row) p {
+  align-self: center;
 }
 
-.main > div:not(.first_row) > div {
+.grid .today_cal:not(.first_row) p {
+  background-color: #981616;
+  border-radius: 50%;
+  padding: .2rem .5rem;
+  color: white;
+}
+
+.grid > div:not(.first_row) > div {
   border: 1px solid black;
   padding: .1rem .5rem;
   border-radius: .2rem;
+  margin-top: .2rem;
+  width: fit-content;
+  cursor: pointer;
 }
 
-.main > div:not(.first_row) > div.after_today {
-  background-color: green;
+.grid > div:not(.first_row) > div.after_today {
+  background-color: #65ce65;
 }
 
-.main > div:not(.first_row) > div.before_today {
-  background-color: red;
+.grid > div:not(.first_row) > div.after_today:hover {
+  background-color: #41c541;
+}
+
+.grid > div:not(.first_row) > div.before_today {
+  background-color: #e85959;
+}
+
+.grid > div:not(.first_row) > div.before_today:hover {
+  background-color: #dc3b3b;
+}
+
+.grid > div.grayed:not(.first_row) > div.before_today {
+  background-color: #592525;
+}
+
+.grid > div.grayed:not(.first_row) > div.before_today:hover {
+  background-color: #643434;
+}
+
+.grid > div.grayed:not(.first_row) > div.after_today {
+  background-color: #175617;
+}
+
+.grid > div.grayed:not(.first_row) > div.after_today:hover {
+  background-color: #246224;
 }

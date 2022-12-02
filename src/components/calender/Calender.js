@@ -10,15 +10,26 @@ const Calender = () => {
   const [previousMonth, setPrevioisMonth] = useState([]);
   const [nextMonth, setNextMonth] = useState([]);
   const [content, setContent] = useState([]);
-  const [returnToCurrent, setReturnToCurrent] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [modalDate, setModalDate] = useState(new Date());
   const [openEventModal, setOpenEventModal] = useState(false);
   const [events, setEvnets] = useState(null);
   const [currentMonthName, setCurrentMonthName] = useState(new Date());
+  const [updateEvents, setUpdateEvents] = useState(null);
+  const [eventModalData, setEventModalData] = useState(null);
+  const [showZones, setShowZones] = useState(false);
+
+  const TIME_ZONES = [{id: '-12', text: 'GMT-12:00'}, {id: '-11', text: 'GMT-11:00'}, {id: '-10', text: 'GMT-10:00'}, {id: '-9', text: 'GMT-9:00'},
+    {id: '-8', text: 'GMT-8:00'}, {id: '-7', text: 'GMT-7:00'}, {id: '-6', text: 'GMT-6:00'}];
 
   const dateComparison = (first, second= new Date()) => {
     return first.getFullYear() === second.getFullYear() && first.getMonth() === second.getMonth() && first.getDate() === second.getDate();
+  }
+
+  const beforeTodayComparison = date => {
+    const today = new Date();
+    return (date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth() && date.getDate() < today.getDate()) ||
+      (date.getFullYear() === today.getFullYear() && date.getMonth() < today.getMonth()) || (date.getFullYear() < today.getFullYear());
   }
 
   useEffect(()=> {
@@ -30,7 +41,7 @@ const Calender = () => {
       }
       setEvnets(newList);
     });
-  }, [])
+  }, [updateEvents])
 
   const getAllDaysInMonth = useCallback((year, month, setMonth, events) => {
     const date = new Date(year, month, 1);
@@ -53,6 +64,23 @@ const Calender = () => {
 
   useEffect(()=> {
     if (!events) return;
+    let now = new Date();
+    if (updateEvents) now = new Date(currentMonth[0].date);
+    getAllDaysInMonth(now.getFullYear(), now.getMonth(), setCurrentMonth, events);
+
+    let monthBefore = new Date();
+    if (updateEvents) monthBefore = new Date(previousMonth[0].date);
+    monthBefore.setMonth(monthBefore.getMonth() - 1);
+    getAllDaysInMonth(monthBefore.getFullYear(), monthBefore.getMonth(), setPrevioisMonth, events);
+
+    let nextMonthTemp = new Date();
+    if (updateEvents) nextMonthTemp = new Date(nextMonth[0].date);
+    nextMonthTemp.setMonth(nextMonthTemp.getMonth() + 1);
+    getAllDaysInMonth(nextMonthTemp.getFullYear(), nextMonthTemp.getMonth(), setNextMonth, events);
+
+  }, [getAllDaysInMonth, events])
+
+  const returnToCurrentHandler = () => {
     const now = new Date();
     getAllDaysInMonth(now.getFullYear(), now.getMonth(), setCurrentMonth, events);
 
@@ -63,8 +91,7 @@ const Calender = () => {
     const nextMonthTemp = new Date();
     nextMonthTemp.setMonth(nextMonthTemp.getMonth() + 1);
     getAllDaysInMonth(nextMonthTemp.getFullYear(), nextMonthTemp.getMonth(), setNextMonth, events);
-
-  }, [getAllDaysInMonth, returnToCurrent, events])
+  }
 
   useEffect(()=> {
     if (currentMonth.length === 0) return;
@@ -80,7 +107,14 @@ const Calender = () => {
           const dateTemp = new Date(previousMonth[0].date);
           month = dateTemp.toLocaleString('default', { month: 'long' });
         }
-        tempContent.push({key: i, style: `${classes.grayed}`, date: previousMonth[previousMonth.length - 1].date, text: `${previousMonth[previousMonth.length - 1].date.getDate()} ${month}`, events: []});
+        const eventContent = [];
+        if (previousMonth[previousMonth.length - currentDay + i].events.length > 0) previousMonth[previousMonth.length - currentDay + i].events.forEach(event => {
+          let beforeToday = false;
+          const eventDateTemp = new Date(event.date);
+          if (beforeTodayComparison(eventDateTemp)) beforeToday = true;
+          eventContent.push(<div key={`${event.date}-${event.time}`} data-name={'event'} onClick={() => openEventModalHandler(event)} className={`${beforeToday ? classes.before_today : classes.after_today}`}>{`${event.time} ${event.title}`}</div>);
+        })
+        tempContent.push({key: i, style: `${classes.grayed}`, date: previousMonth[previousMonth.length - currentDay + i].date, text: `${previousMonth[previousMonth.length - currentDay + i].date.getDate()} ${month}`, events: eventContent});
         continue;
       } else {
         if (currentMonth[i - currentDay]) {
@@ -95,8 +129,10 @@ const Calender = () => {
           if (currentMonth[i - currentDay].events.length > 0) currentMonth[i - currentDay].events.forEach(event => {
             let beforeToday = false;
             const eventDateTemp = new Date(event.date);
-            if (dateComparison(eventDateTemp)) beforeToday = true;
-            eventContent.push(<div className={`${beforeToday ? classes.before_today : classes.after_today}`}>{`${event.time} ${event.title}`}</div>);
+            if (beforeTodayComparison(eventDateTemp)) beforeToday = true;
+            let duration = event.duration === '1 hour' ? '01:00' : event.duration === '2 hours' ? '02:00' : '00:30';
+            let endTime = `${+event.time.split(':')[0] + +duration.split(':')[0]}:${+event.time.split(':')[1] + +duration.split(':')[1]}`;
+            eventContent.push(<div data-name={'event'} key={`${event.date}-${event.time}`} onClick={() => openEventModalHandler(event)} className={`${beforeToday ? classes.before_today : classes.after_today}`}>{`${event.time}-${endTime} ${event.title}`}</div>);
           })
           tempContent.push({key: i, style: `${isToday ? classes.today_cal : ''}`, date: currentMonth[i - currentDay].date, text: `${currentMonth[i - currentDay].date.getDate()} ${month}`, events: eventContent});
           continue;
@@ -108,7 +144,14 @@ const Calender = () => {
         const dateTemp = new Date(nextMonth[0].date);
         month = dateTemp.toLocaleString('default', { month: 'long' });
       }
-      tempContent.push({key: i, style: `${classes.grayed}`, date: nextMonth[i - (currentMonth.length + currentDay)].date, text: `${nextMonth[i - (currentMonth.length + currentDay)].date.getDate()} ${month}`, events: []});
+      const eventContent = [];
+      if (nextMonth[i - (currentMonth.length + currentDay)].events.length > 0) nextMonth[i - (currentMonth.length + currentDay)].events.forEach(event => {
+        let beforeToday = false;
+        const eventDateTemp = new Date(event.date);
+        if (beforeTodayComparison(eventDateTemp)) beforeToday = true;
+        eventContent.push(<div data-name={'event'} key={`${event.date}-${event.time}`} onClick={() => openEventModalHandler(event)} className={`${beforeToday ? classes.before_today : classes.after_today}`}>{`${event.time} ${event.title}`}</div>);
+      })
+      tempContent.push({key: i, style: `${classes.grayed}`, date: nextMonth[i - (currentMonth.length + currentDay)].date, text: `${nextMonth[i - (currentMonth.length + currentDay)].date.getDate()} ${month}`, events: eventContent});
     }
     setContent(tempContent);
   }, [currentMonth, previousMonth, nextMonth])
@@ -131,9 +174,16 @@ const Calender = () => {
     getAllDaysInMonth(nextMonthTemp.getFullYear(), nextMonthTemp.getMonth(), setNextMonth, events);
   }
 
-  const openModalHandler = date => {
+  const openModalHandler = (ev, date) => {
+    if (ev.target.dataset.name === 'event') return;
     setOpenModal(true);
     const newTempDate = new Date(date);
+    let currentMonthTemp = new Date(currentMonth[0].date);
+    currentMonthTemp = currentMonthTemp.getMonth();
+    if (+currentMonthTemp === 0) currentMonthTemp = 12;
+    let newTempDateMonth = newTempDate.getMonth() === 0 ? 12 : newTempDate.getMonth();
+    if (newTempDateMonth < currentMonthTemp) oneMonthBeforeHandler();
+    if (newTempDateMonth > currentMonthTemp) oneMonthLaterHandler();
     setModalDate(newTempDate);
   }
 
@@ -141,15 +191,25 @@ const Calender = () => {
     setOpenModal(false);
   }
 
+  const openEventModalHandler = data => {
+    setEventModalData(data);
+    setOpenEventModal(true);
+  }
+
   const closeEventModalHandler = () => {
     setOpenEventModal(false);
   }
 
+  const updateEventsHandler = () => {
+    if (!updateEvents) return setUpdateEvents(true);
+    setUpdateEvents(prevState => !prevState)
+  }
+
   return (
     <div className={classes.container}>
-      {openEventModal && <DateModal closeModal={closeEventModalHandler} date={modalDate}></DateModal>}
+      {openEventModal && <DateModal data={eventModalData} closeModal={closeEventModalHandler}></DateModal>}
 
-      {openModal && <InputModal date={modalDate} closeModal={closeModalHandler}></InputModal>}
+      {openModal && <InputModal updateEvents={updateEventsHandler} date={modalDate} closeModal={closeModalHandler}></InputModal>}
 
       <div className={classes.header}>
         <div>
@@ -159,24 +219,31 @@ const Calender = () => {
             <i onClick={oneMonthLaterHandler} className='bx bxs-chevron-right'></i>
           </div>
         </div>
-        <div onClick={() => setReturnToCurrent(prevState => !prevState)} className={classes.today}>
+        <div onClick={returnToCurrentHandler} className={classes.today}>
           Today
         </div>
-        <div onClick={() => setOpenEventModal(true)} className={classes.zone}>
-          Zone
+        <div onClick={() => {setShowZones(prevState => !prevState)}} className={classes.zone}>
+          Timezone
+          {showZones && <div>
+            {TIME_ZONES.map(zone => <div key={zone.id}>
+              {zone.text}
+            </div>)}
+          </div>}
         </div>
       </div>
       <div className={classes.main}>
-        <div className={classes.first_row}>Mon</div>
-        <div className={classes.first_row}>Tue</div>
-        <div className={classes.first_row}>Wed</div>
-        <div className={classes.first_row}>Thu</div>
-        <div className={classes.first_row}>Fri</div>
-        <div className={classes.first_row}>Sat</div>
-        <div className={classes.first_row}>Sun</div>
-        {content.map(day => {
-          return <div key={day.key} className={day.style} onClick={() => openModalHandler(day.date)}>{day.text}{day.events.map(event => event)}</div>
-        })}
+        <div className={classes.grid}>
+          <div className={classes.first_row}>Mon</div>
+          <div className={classes.first_row}>Tue</div>
+          <div className={classes.first_row}>Wed</div>
+          <div className={classes.first_row}>Thu</div>
+          <div className={classes.first_row}>Fri</div>
+          <div className={classes.first_row}>Sat</div>
+          <div className={classes.first_row}>Sun</div>
+          {content.map(day => {
+            return <div key={day.key} className={day.style} onClick={(ev) => openModalHandler(ev,day.date)}><p>{day.text}</p>{day.events.map(event => event)}</div>
+          })}
+        </div>
       </div>
     </div>
   );

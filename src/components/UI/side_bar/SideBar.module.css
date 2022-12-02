@@ -14,6 +14,14 @@
   font-size: 1.2rem;
   color: #0e3381;
   font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.side_bar p {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .side_bar > div:not(.logout) {

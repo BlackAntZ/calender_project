@@ -1,7 +1,7 @@
 .modal {
   background-color: var(--color-gray-50);
   position: absolute;
-  width: 30%;
+  width: 35%;
   top: 50%;
   left: 50%;
   opacity: 1;
@@ -70,6 +70,16 @@
   display: grid;
   grid-template-columns: minmax(1rem, 2fr) minmax(1rem, 1fr) minmax(1rem, 1fr);
   margin-bottom: 1rem;
+}
+
+.content > div:nth-of-type(2) > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.content > div:nth-of-type(2) > div > span:last-of-type {
+  font-weight: 600;
+  color: #8d0b0b;
 }
 
 .join {

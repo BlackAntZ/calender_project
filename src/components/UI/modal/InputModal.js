@@ -13,14 +13,14 @@ export const BackDrop = ({closeModal}) => {
   )
 }
 
-const Modal = ({closeModal, date}) => {
-  const [modalClasses, setModalClasses] = useState(`${styles.modal} ${styles.hidden}`);
+const Modal = ({closeModal, date, updateEvents}) => {
+  const [modalClasses, setModalClasses] = useState(`${styles.modal} ${classes.modal} ${styles.hidden}`);
   const [formData, setFormData] = useState({date: date});
 
   const nameInput = useRef(), titleInput = useRef(), topicInput = useRef(), linkInput = useRef(), timePicker = useRef(), dropdown = useRef(), button = useRef();
 
   useEffect(()=> {
-    setModalClasses(`${styles.modal}`);
+    setModalClasses(`${styles.modal} ${classes.modal}`);
   },[])
 
   const collectFormData = data => {
@@ -59,6 +59,7 @@ const Modal = ({closeModal, date}) => {
     })
     console.log(response);
     closeModal();
+    updateEvents();
   }
 
   const keydownBehavior = ev => {
@@ -89,11 +90,11 @@ const Modal = ({closeModal, date}) => {
   )
 }
 
-const InputModal = ({closeModal, date}) => {
+const InputModal = ({closeModal, date, updateEvents}) => {
   return (
     <>
       {ReactDOM.createPortal(<BackDrop closeModal={closeModal}></BackDrop>, document.getElementById('overlays'))}
-      {ReactDOM.createPortal(<Modal date={date} closeModal={closeModal}></Modal>, document.getElementById('overlays'))}
+      {ReactDOM.createPortal(<Modal updateEvents={updateEvents} date={date} closeModal={closeModal}></Modal>, document.getElementById('overlays'))}
     </>
   )
 }
